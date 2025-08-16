@@ -21,6 +21,8 @@ public class EmployeeEntity {
     private Long id;
     private String name;
     private String address;
+    private Integer age;
+    private String email;
     private LocalDate date;
     private Boolean isActive;
 }

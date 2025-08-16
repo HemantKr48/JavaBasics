@@ -5,6 +5,11 @@ import com.codeShuttleCourse.week21.dtoandJpa.dto.EmployeeDto;
 import com.codeShuttleCourse.week21.dtoandJpa.entities.EmployeeEntity;
 import com.codeShuttleCourse.week21.dtoandJpa.repositories.EmployeeRepository;
 import com.codeShuttleCourse.week21.dtoandJpa.services.EmployeeService;
+import jakarta.validation.Valid;
+import org.apache.coyote.Response;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,19 +27,33 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     @GetMapping("/{employeeID}")
-    public EmployeeDto getEmployeeById(@PathVariable(name="employeeID")  Long id){
-        return employeeService.getEmployeeById(id);
+    public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable(name="employeeID")  Long id){
+        EmployeeDto employee=employeeService.getEmployeeById(id);
+        if(employee==null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.ok(employee);
+
     }
 
     @GetMapping("/getAll")
-    public List<EmployeeDto> getAllEmployees(){
-        return employeeService.getAllEmployees();
+    public ResponseEntity<List<EmployeeDto>> getAllEmployees(){
+       List<EmployeeDto> employee=  employeeService.getAllEmployees();
+       if(employee==null){
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+       }
+
+       return ResponseEntity.ok(employee);
     }
 
     @PostMapping
-    public EmployeeDto createEmployee(@RequestBody EmployeeDto employee){
+    public ResponseEntity<EmployeeDto> createEmployee(@RequestBody @Valid  EmployeeDto employee){
 
-        return employeeService.createEmployee(employee);
+        EmployeeDto savedEmployee= employeeService.createEmployee(employee);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(savedEmployee);
 
     }
 }
